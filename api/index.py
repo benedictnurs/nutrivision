@@ -5,6 +5,8 @@ import numpy as np
 import mediapipe as mp
 from PIL import Image
 from io import BytesIO
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 mp_hands = mp.solutions.hands
@@ -21,6 +23,7 @@ def calculate_ppi(pixel_width_of_object, actual_width_in_inches):
 
 @app.route('/api', methods=['POST'])
 def upload_image():
+    app.logger.debug("Request received with data: %s", request.data)
     data = request.json
     if not data or 'image' not in data:
         return jsonify({'message': 'No image provided'}), 400
