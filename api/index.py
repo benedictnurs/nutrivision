@@ -50,6 +50,12 @@ def upload_image():
 
         # Calculate distance in inches
         distance = calculate_distance(thumb_tip_pos, index_tip_pos)
+        distance_text = f"{distance:.2f} inches"
+
+        # Put text on the image
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        midpoint = ((thumb_tip_pos[0] + index_tip_pos[0]) // 2, (thumb_tip_pos[1] + index_tip_pos[1]) // 2)
+        cv2.putText(image, distance_text, midpoint, font, 0.9, (255, 255, 255), 2, cv2.LINE_AA)
 
         # Convert image back to RGB for PIL compatibility
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
