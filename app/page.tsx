@@ -6,10 +6,7 @@ import { Camera } from "./components/Camera/Camera";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <NavBar />
-      <div className="mt-[5%]">
         <Camera />
-      </div>
     </main>
   );
 }
