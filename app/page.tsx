@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <NavBar />
-      <div className="w-20% mt-8">
+      <div className="mt-[5%]">
         <Camera />
       </div>
     </main>

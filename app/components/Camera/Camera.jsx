@@ -3,8 +3,8 @@ import React from "react";
 import Webcam from "react-webcam";
 
 const videoConstraints = {
-  width: 1280,  // Setting this to a high resolution for better quality
-  height: 720,  // Standard HD resolution to maintain good image quality
+  width: 1280,  // High resolution for better quality
+  height: 720,  // Standard HD resolution for good image quality
   facingMode: "user",
 };
 
@@ -24,11 +24,16 @@ export const Camera = () => {
     setIsActive(!isActive);
   };
 
-
+  // Defined style for maintaining consistency
+  const consistentStyle = {
+    width: '640px',  // Set a fixed width
+    height: '360px', // Height to maintain a 16:9 aspect ratio based on the width
+    margin: 'auto'   // Center the container
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-screen">
-      <div className="w-full max-w-xl p-4 bg-gray-100 rounded-lg shadow-lg flex flex-col items-center justify-center relative">
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="rounded-lg shadow-lg flex flex-col items-center justify-center relative bg-gray-100" style={consistentStyle}>
         {isActive ? (
           <Webcam
             audio={false}
@@ -38,7 +43,7 @@ export const Camera = () => {
             className="w-full h-full rounded-lg"
           />
         ) : (
-          <div className="w-full h-full bg-gray-300 rounded-lg flex items-center justify-center text-lg text-gray-500">
+          <div className="w-full h-full flex items-center justify-center text-lg text-gray-500">
             Camera Off
           </div>
         )}
@@ -57,13 +62,15 @@ export const Camera = () => {
           {isActive ? "Turn Camera Off" : "Turn Camera On"}
         </button>
       </div>
-      {imgSrc && (
+      <div className="mt-8">      {imgSrc && (
         <img
           src={imgSrc}
           alt="Captured"
+          style={consistentStyle} // Ensuring the image also adheres to the fixed dimensions
           className="mt-4 rounded-lg"
         />
-      )}
+      )}</div>
+
     </div>
   );
 };
