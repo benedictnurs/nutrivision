@@ -1,38 +1,48 @@
-"use client";
-import React from "react";
+"use client"
+import React, { useState, useRef, useCallback } from "react";
 import Webcam from "react-webcam";
 
 const videoConstraints = {
-  width: 1280, // High resolution for better quality
-  height: 720, // Standard HD resolution for good image quality
+  width: 1280,
+  height: 720,
   facingMode: "user",
 };
 
 export const Camera = () => {
-  const webcamRef = React.useRef(null);
-  const [imgSrc, setImgSrc] = React.useState(null);
-  const [isActive, setIsActive] = React.useState(true);
+  const webcamRef = useRef(null);
+  const [processedImgSrc, setProcessedImgSrc] = useState(null);
+  const [isActive, setIsActive] = useState(true);
 
-  const capture = React.useCallback(() => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      setImgSrc(imageSrc);
+  const capture = useCallback(() => {
+    const imageSrc = webcamRef.current?.getScreenshot();
+    if (imageSrc) {
+      fetch("/api", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: imageSrc }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        if (data.image_with_line) {
+          // Set the processed image with the line drawn on it
+          setProcessedImgSrc('data:image/jpeg;base64,' + data.image_with_line);
+        }
+      })
+      .catch(error => console.error("Error:", error));
     }
-  }, [webcamRef]);
+  }, []);
 
-  const toggleCamera = () => {
-    setIsActive(!isActive);
-  };
+  const toggleCamera = () => setIsActive(prevIsActive => !prevIsActive);
 
-  // Defined style for maintaining consistency
   const consistentStyle = {
-    width: "640px", // Set a fixed width
-    height: "360px", // Height to maintain a 16:9 aspect ratio based on the width
-    margin: "auto", // Center the container
+    width: "640px",
+    height: "360px",
+    margin: "auto",
   };
 
   return (
-    <div className="">
+    <div>
       <div
         className="rounded-lg shadow-lg flex flex-col items-center justify-center bg-gray-100"
         style={consistentStyle}
@@ -51,31 +61,22 @@ export const Camera = () => {
           </div>
         )}
       </div>
-      <div className="flex justify-center space-x-4 mt-5">
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
-          onClick={capture}
-        >
+      <div className="flex justify-center space-x-4 my-5">
+        <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded" onClick={capture}>
           Capture Photo
         </button>
-        <button
-          className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded"
-          onClick={toggleCamera}
-        >
+        <button className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded" onClick={toggleCamera}>
           {isActive ? "Turn Camera Off" : "Turn Camera On"}
         </button>
       </div>
-      <div className="mt-8">
-        {" "}
-        {imgSrc && (
-          <img
-            src={imgSrc}
-            alt="Captured"
-            style={consistentStyle} // Ensuring the image also adheres to the fixed dimensions
-            className="mt-4 rounded-lg"
-          />
-        )}
-      </div>
+      {processedImgSrc && (
+        <img
+          src={processedImgSrc}
+          alt="Processed"
+          style={consistentStyle}
+          className="mt-4 rounded-lg"
+        />
+      )}
     </div>
   );
 };
