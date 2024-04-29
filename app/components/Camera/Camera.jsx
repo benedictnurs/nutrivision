@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Webcam from "react-webcam";
 
@@ -23,14 +23,16 @@ export const Camera = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image: imageSrc }),
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        if (data.image_with_line) {
-          setProcessedImgSrc('data:image/jpeg;base64,' + data.image_with_line);
-        }
-      })
-      .catch(error => console.error("Error:", error));
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.image_with_tracking) {
+            setProcessedImgSrc(
+              "data:image/jpeg;base64," + data.image_with_tracking
+            );
+          }
+        })
+        .catch((error) => console.error("Error:", error));
     }
   }, []);
 
@@ -55,19 +57,25 @@ export const Camera = () => {
   }, [intervalId]);
 
   const buttonStyle = {
-    backgroundColor: capturing ? '#ff6347' : '#32cd32', // Tomato for stop, lime green for start
-    color: 'white',
-    padding: '8px 16px',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    margin: '0 8px'
+    backgroundColor: capturing ? "#ff6347" : "#32cd32", // Tomato for stop, lime green for start
+    color: "white",
+    padding: "8px 16px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    margin: "0 8px",
   };
 
   return (
     <div>
-      <div className="rounded-lg shadow-lg flex flex-col items-center justify-center bg-gray-100" style={{ width: "640px", height: "360px", margin: "auto" }}>
+      <h1 className="mb-3 text-xl">Gesture Detection</h1>
+
+      <div
+        className="rounded-lg shadow-lg flex flex-col items-center justify-center bg-gray-100"
+        style={{ width: "640px", height: "360px", margin: "auto" }}
+      >
         {isActive ? (
           <Webcam
+            mirrored={true}
             audio={false}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
@@ -81,21 +89,29 @@ export const Camera = () => {
         )}
       </div>
       <div className="flex justify-center space-x-4 my-5">
-        <button
-          style={buttonStyle}
-          onClick={toggleCapture}
-        >
-          {capturing ? 'Stop Capture' : 'Start Capture'}
+        <button style={buttonStyle} onClick={toggleCapture}>
+          {capturing ? "Stop Capture" : "Start Capture"}
         </button>
         <button
-          style={{ backgroundColor: '#6495ed', color: 'white', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+          style={{
+            backgroundColor: "#6495ed",
+            color: "white",
+            padding: "8px 16px",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
           onClick={toggleCamera}
         >
           {isActive ? "Turn Camera Off" : "Turn Camera On"}
         </button>
       </div>
       {processedImgSrc && (
-        <img src={processedImgSrc} alt="Processed" style={{ width: "640px", height: "360px", margin: "auto" }} className="mt-4 rounded-lg" />
+        <img
+          src={processedImgSrc}
+          alt="Processed"
+          style={{ width: "640px", height: "360px", margin: "auto" }}
+          className="mt-4 rounded-lg"
+        />
       )}
     </div>
   );
